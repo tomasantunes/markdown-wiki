@@ -11,6 +11,7 @@ app = Flask(__name__)
 jsglue = JSGlue(app)
 
 wiki_folder = "wiki"
+static_folder = "wiki"
 wiki_route = "/wiki"
 wiki_title = "Markdown Wiki"
 exclude = set(['.git', 'app'])
@@ -41,11 +42,11 @@ for root, dirs, files in os.walk(wiki_folder, topdown=True):
 
 @app.route(wiki_route)
 def mainWiki():
-    return render_template(wiki_folder + "/" + "index.html", wiki_folder=wiki_folder, wiki_route=wiki_route, wiki_title=wiki_title)
+    return render_template(wiki_folder + "/" + "index.html", wiki_folder=wiki_folder, wiki_route=wiki_route, static_folder=static_folder, wiki_title=wiki_title)
 
 @app.route(wiki_route + "/feed")
 def feed():
-    return render_template(wiki_folder + "/" + "feed.html", wiki_folder=wiki_folder, wiki_route=wiki_route, wiki_title=wiki_title)
+    return render_template(wiki_folder + "/" + "feed.html", wiki_folder=wiki_folder, wiki_route=wiki_route, static_folder=static_folder, wiki_title=wiki_title)
 
 @app.route(wiki_route + "/get-feed")
 def getFeed():

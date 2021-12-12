@@ -12,6 +12,7 @@ jsglue = JSGlue(app)
 
 wiki_folder = "wiki"
 wiki_route = "/wiki"
+wiki_title = "Markdown Wiki"
 exclude = set(['.git', 'app'])
 tree = {}
 count = 0
@@ -40,11 +41,11 @@ for root, dirs, files in os.walk(wiki_folder, topdown=True):
 
 @app.route(wiki_route)
 def mainWiki():
-    return render_template(wiki_folder + "/" + "index.html", wiki_folder=wiki_folder, wiki_route=wiki_route)
+    return render_template(wiki_folder + "/" + "index.html", wiki_folder=wiki_folder, wiki_route=wiki_route, wiki_title=wiki_title)
 
 @app.route(wiki_route + "/feed")
 def feed():
-    return render_template(wiki_folder + "/" + "feed.html", wiki_folder=wiki_folder, wiki_route=wiki_route)
+    return render_template(wiki_folder + "/" + "feed.html", wiki_folder=wiki_folder, wiki_route=wiki_route, wiki_title=wiki_title)
 
 @app.route(wiki_route + "/get-feed")
 def getFeed():

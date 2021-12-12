@@ -8,7 +8,7 @@ Install Python3
 pip install Flask markdown Flask-JSGlue
 python main.py
 On your browser go to localhost:5000/wiki
-You can change your wiki's route and folder.
+You can change your wiki's route, folder and title.
 ```
 
 ### How to update repo

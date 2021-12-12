@@ -1,0 +1,32 @@
+.main-title {
+    text-align: center;
+}
+
+.gallery {
+    border: 1px solid black;
+    width: 100%;
+}
+
+.gallery-image {
+    border: 1px solid black;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+}
+
+.gallery-image img {
+    max-width: 100%;
+}
+
+.feed-entry {
+    border: 2px solid #0d6efd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    font-size: 32px;
+}
+
+.buttons-menu {
+    padding: 20px 0;
+    text-align: right;
+}

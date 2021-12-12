@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css'>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.4/css/tether.min.css'>
+    <link rel="stylesheet" href="{{ url_for('static', filename=wiki_folder + '/style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename=wiki_folder + '/navbar.css')}}">
+    {{ JSGlue.include() }}
+
+    <title>Markdown Wiki</title>
+  </head>
+  <body>
+    <header class="section-header py-4">
+        <div class="container">
+            <div class="main-title">
+                <h2>Markdown Wiki</h2>
+            </div>
+        </div>
+    </header> <!-- section-header.// -->
+
+    <div class="container-fluid" id="app">
+        <div class="row">
+            <div class="menu col-md-2">
+                <!-- ============= COMPONENT ============== -->
+                <nav class="navbar navbar-dark bg-primary">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="/">Markdown Wiki</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav"  aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="main_nav">
+                            <ul class="navbar-nav">
+                                <li class="nav-item active"> <a class="nav-link" href="{{wiki_route}}">Home </a> </li>
+                                <li class="nav-item active" data-bind="visible: !feedIsOpen()"> <a class="nav-link" href="{{wiki_route}}/feed">Feed </a> </li>
+                                <div data-bind="foreach: tree, visible: !feedIsOpen()">
+                                    <li class="nav-item dropdown" data-bind="visible: folders().length > 0">
+                                        <a class="nav-link" href="#" data-bind="text: name, click: openFiles"></a><span class="dropdown-toggle" data-bs-toggle="dropdown"></span>
+                                        <ul class="dropdown-menu">
+                                            <!-- ko foreach: folders -->
+                                                    <li><a class="dropdown-item" href="#" data-bind="text: ' ' + name() + ' &raquo; ', visible: folders().length > 0, click: openFiles"></a>
+                                                        <ul class="submenu dropdown-menu">
+                                                            <!-- ko foreach: folders -->
+                                                                <li><a class="dropdown-item" href="#" data-bind="text: name, click: openFiles"></a></li>
+                                                            <!-- /ko -->
+                                                        </ul>
+                                                    </li>
+
+                                                    <li><a class="dropdown-item" href="#" data-bind="text: name, visible: folders().length < 1, click: openFiles"></a></li>
+
+                                            <!-- /ko -->
+                                        </ul>
+
+                                    </li>
+                                    <li class="nav-item"><a class="nav-link" href="#" data-bind="text: name, visible: folders().length < 1, click: openFiles"></a></li>
+                                </div>
+                            </ul>
+                        
+                        </div> <!-- navbar-collapse.// -->
+                    </div> <!-- container-fluid.// -->
+                </nav>
+            </div>
+
+            <div class="col-md-8">
+                {% block content %} {% endblock %}
+            </div>
+        <div class="row"></div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"crossorigin="anonymous"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.4/js/tether.min.js'></script>
+    <script src="{{ url_for('static', filename=wiki_folder + '/knockout.js')}}"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+        
+
+    	/////// Prevent closing from click inside dropdown
+		document.querySelectorAll('.dropdown-menu').forEach(function(element){
+			element.addEventListener('click', function (e) {
+			  e.stopPropagation();
+			});
+		})
+
+
+
+		// make it as accordion for smaller screens
+		if (window.innerWidth < 992) {
+
+			// close all inner dropdowns when parent is closed
+			document.querySelectorAll('.navbar .dropdown').forEach(function(everydropdown){
+				everydropdown.addEventListener('hidden.bs.dropdown', function () {
+					// after dropdown is hidden, then find all submenus
+					  this.querySelectorAll('.submenu').forEach(function(everysubmenu){
+					  	// hide every submenu as well
+					  	everysubmenu.style.display = 'none';
+					  });
+				})
+			});
+			
+			document.querySelectorAll('.dropdown-menu a').forEach(function(element){
+				element.addEventListener('click', function (e) {
+		
+				  	let nextEl = this.nextElementSibling;
+				  	if(nextEl && nextEl.classList.contains('submenu')) {	
+				  		// prevent opening link if link needs to open dropdown
+				  		e.preventDefault();
+				  		if(nextEl.style.display == 'block'){
+				  			nextEl.style.display = 'none';
+				  		} else {
+				  			nextEl.style.display = 'block';
+				  		}
+
+				  	}
+				});
+			})
+		} // end if innerWidth
+
+        function findGetParameter(parameterName) {
+            var result = null,
+                tmp = [];
+            var items = location.search.substr(1).split("&");
+            for (var index = 0; index < items.length; index++) {
+                tmp = items[index].split("=");
+                if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+            }
+            return result;
+        }
+
+        function AppModelView() {
+            var self = this;
+            self.tree = ko.observableArray();
+            self.MDFiles = ko.observableArray();
+            self.imageFiles = ko.observableArray();
+            self.feed = ko.observableArray();
+            self.currentCategory = ko.observable();
+            self.feedIsOpen = ko.observable(false);
+
+            self.FolderModel = function(f) {
+                var fm = this;
+                fm.name = ko.observable(f.name)
+                fm.root = ko.observable(f.root);
+                fm.folders = ko.observableArray();
+
+                fm.loadFolders = function() {
+                    $.each(f.folders, function(i, val) {
+                        fm.folders.push(new self.FolderModel(val));
+                    });
+                }
+
+                fm.openFiles = function() {
+                    self.imageFiles.removeAll();
+                    $.get("{{wiki_route}}/get-images", {"root": fm.root()})
+                    .done(function(data) {
+                        $.each(data, function(i, val) {
+                            var filename = val.replace(/\\/g,"/");
+                            filename = filename.substring(filename.indexOf('/') + 1);
+                            self.imageFiles.push(new self.ImageModel({"path": Flask.url_for("getImageFile", {"filename": filename})}));
+                        });
+                    });
+
+                    self.MDFiles.removeAll();
+                    $.get("{{wiki_route}}/get-md-files", {"root": fm.root()})
+                    .done(function(data) {
+                        $.each(data, function(i, val) {
+                            self.MDFiles.push(new self.MDFileModel({
+                                "content": val['content'],
+                                "link": val['link'],
+                                "filename": val['filename']
+                            }));
+                        });
+                        self.currentCategory(fm.name());
+                        window.scrollTo(0, 0);
+                    });
+                }
+
+                fm.loadFolders()
+            }
+
+            self.openFile = function(f) {
+
+                var root = "{{wiki_folder}}/" + f.substring(0, f.lastIndexOf("/"));
+                var filename = f.substring(f.lastIndexOf('/')+1, f.lastIndexOf('.'));
+                var pathElements = f.split('/');
+                var folderName = pathElements[pathElements.length - 2];
+
+                self.imageFiles.removeAll();
+                $.get("{{wiki_route}}/get-images", {"root": root})
+                .done(function(data) {
+                    $.each(data, function(i, val) {
+                        var filename = val.replace(/\\/g,"/");
+                        filename = filename.substring(filename.indexOf('/') + 1);
+                        self.imageFiles.push(new self.ImageModel({"path": Flask.url_for("getImageFile", {"filename": filename})}));
+                    });
+                });
+
+                self.MDFiles.removeAll();
+                $.get("{{wiki_route}}/get-md-files", {"root": root})
+                .done(function(data) {
+                    $.each(data, function(i, val) {
+                        self.MDFiles.push(new self.MDFileModel({
+                            "content": val['content'],
+                            "link": val['link'],
+                            "filename": val['filename']
+                        }));
+                    });
+                    self.currentCategory(folderName);
+                    setTimeout(function() {
+                        window.location = window.location + "#" + filename;
+                    }, 3000);
+                    
+                });
+            }
+
+            self.ImageModel = function(i) {
+                var im = this;
+                im.path = ko.observable(i.path);
+                var fn = i.path.substring(i.path.lastIndexOf('/')+1, i.path.lastIndexOf('.'));
+                im.filename = ko.observable(fn);
+                im.link = ko.observable("#" + fn);
+                im.linkID = ko.observable(fn + "-link");
+            }
+
+            self.MDFileModel = function(m) {
+                var md = this;
+                md.content = ko.observable(m.content);
+                md.filename = ko.observable(m.filename);
+                md.link = ko.observable(m.link);
+                md.linkID = ko.observable(m.filename + "-link")
+            }
+
+            self.loadData = function() {
+                $.getJSON("{{wiki_route}}/get-tree")
+                .done(function(data) {
+                    console.log(data)
+                    $.each(Object.keys(data), function(i, val) {
+                        var folders2 = [];
+                        for (var key2 in data[val]['folders']) {
+                            var obj2 = {
+                                "name": key2,
+                                "root": data[val]['folders'][key2]['root'],
+                                "folders": []
+                            }
+                            for (var key3 in data[val]['folders'][key2]['folders']) {
+                                var obj3 = {
+                                    "name": key3,
+                                    "root": data[val]['folders'][key2]['folders'][key3]["root"],
+                                    "folders": []
+                                }
+                                obj2['folders'].push(obj3);
+                            }
+                            folders2.push(obj2);
+                        }
+                        var obj = {
+                            "name": val,
+                            "root": data[val]["root"],
+                            "folders": folders2
+                        }
+                        self.tree.push(new self.FolderModel(obj));
+                    });
+                });
+            }
+
+            self.FeedEntryModel = function(f) {
+                var fem = this;
+                fem.entry = ko.observable(f);
+            }
+
+            self.loadFeed = function() {
+                $.getJSON("{{wiki_route}}/get-feed")
+                .done(function(data) {
+                    $.each(data, function(i, val) {
+                        self.feed.push(new self.FeedEntryModel(
+                            val.substring(2, 21) + " <b>" + val.substring(24, val.length) + "</b>",
+                        ));
+                    });
+                });
+            }
+
+            self.refreshFeed = function() {
+                $.get("{{wiki_route}}/refresh-repo")
+                .done(function() {
+                    self.feed.removeAll();
+                    self.loadFeed();
+                });
+                
+            }
+
+            self.init = function() {
+                self.loadData();
+                if (window.location.pathname == "{{wiki_route}}/feed") {
+                    self.feedIsOpen(true);
+                    self.loadFeed();
+                    setInterval(function() {
+                        self.feed.removeAll();
+                        self.loadFeed();
+                        console.log("Feed has been refreshed.")
+                    }, 60000);
+                }
+
+                var fileToOpen = findGetParameter("fileToOpen");
+                if (fileToOpen) {
+                    self.openFile(fileToOpen);
+                }
+            }
+
+            self.init();
+        }
+		
+        ko.applyBindings(new AppModelView(), document.getElementById("app"));
+	}); 
+    </script>
+  </body>
+</html>

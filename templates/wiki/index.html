@@ -1,0 +1,41 @@
+{% extends wiki_folder + '/base.html' %}
+
+{% block content %}
+    <h1 data-bind="text: currentCategory"></h1>
+    <div class="gallery-index" data-bind="visible: imageFiles().length > 0">
+        <h3>Images</h3>
+        <ul>
+            <!-- ko foreach: imageFiles -->
+                <li>
+                    <a data-bind="attr: { href: link, id: linkID }, text: filename"></a>
+                </li>
+            <!-- /ko -->
+        </ul>
+    </div>
+    <div class="mdfiles-index" data-bind="visible: MDFiles().length > 0">
+        <h3>Markdown Files</h3>
+        <ul>
+            <!-- ko foreach: MDFiles -->
+                <li>
+                    <a data-bind="attr: { href: link, id: linkID }, text: filename"></a>
+                </li>
+            <!-- /ko -->
+        </ul>
+    </div>
+    <div class="gallery" data-bind="visible: imageFiles().length > 0">
+        <!-- ko foreach: imageFiles -->
+            <div class="gallery-image" data-bind="attr: { id: filename }">
+                <h3 data-bind="text: filename"></h3>
+                <img data-bind="attr: {src: path}">
+            </div>
+        <!-- /ko -->
+    </div>
+    <div data-bind="foreach: MDFiles">
+        <div class="card">
+            <div class="card-body">
+                <div data-bind="html: content, attr: { id: filename }"></div>
+            </div>
+        </div>
+        <hr>
+    </div>
+{% endblock %}

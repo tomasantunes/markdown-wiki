@@ -32,7 +32,7 @@ if len(files) > 0:
     entry += "</ul>"
     time = str(datetime.datetime.now().replace(microsecond=0))
 
-    file = open("logs/feed.md", "a")
+    file = open(wiki_folder + "/logs/feed.md", "a")
     file.write("- " + time + " - " + entry + "\n")
     file.close()
 

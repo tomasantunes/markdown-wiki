@@ -9,7 +9,7 @@ wiki_route = "/wiki"
 wiki_folder = "wiki"
 excluded_files = [wiki_folder + '/logs/feed.md']
 link_excluded_files = ['README.md']
-extensions = ('.jpg', '.jpeg', '.png', '.gif', '.webp', '.md')
+extensions = ('.jpg', '.jpeg', '.png', '.gif', '.webp', '.jfif', '.md')
 
 
 status = subprocess.run(['git', 'status', '--porcelain'], stdout=subprocess.PIPE, shell=True).stdout.decode('utf-8')

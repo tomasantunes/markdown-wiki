@@ -84,7 +84,7 @@ def getMDFiles():
 def getImages():
     root = request.args.get('root')
 
-    extensions = ('.jpg', '.jpeg', '.png', '.gif', '.webp')
+    extensions = ('.jpg', '.jpeg', '.png', '.gif', '.jfif', '.webp')
     files = [join(root, f) for f in listdir(root) if isfile(join(root, f)) and f.endswith(extensions)]
             
     return jsonify(files)

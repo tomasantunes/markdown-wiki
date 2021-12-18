@@ -80,6 +80,14 @@ def getMDFiles():
             
     return jsonify(data)
 
+@app.route(wiki_route + "/get-pdf-files")
+def getPDFFiles():
+    root = request.args.get('root')
+
+    pdf_files = [join(root, f) for f in listdir(root) if isfile(join(root, f)) and f.endswith(".pdf")]
+
+    return jsonify(pdf_files)
+
 @app.route(wiki_route + "/get-images")
 def getImages():
     root = request.args.get('root')
@@ -91,6 +99,10 @@ def getImages():
 
 @app.route(wiki_route + '/images/<path:filename>')
 def getImageFile(filename):
+    return send_from_directory("./" + wiki_folder, filename, as_attachment=True)
+
+@app.route(wiki_route + '/pdf-files/<path:filename>')
+def getPDFFile(filename):
     return send_from_directory("./" + wiki_folder, filename, as_attachment=True)
 
 if __name__ == "__main__":

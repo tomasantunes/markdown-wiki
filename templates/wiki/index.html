@@ -12,6 +12,16 @@
             <!-- /ko -->
         </ul>
     </div>
+    <div class="pdffiles-index" data-bind="visible: PDFFiles().length > 0">
+        <h3>PDF Files</h3>
+        <ul>
+            <!-- ko foreach: PDFFiles -->
+                <li>
+                    <a data-bind="attr: { href: path, id: linkID }, text: filename"></a>
+                </li>
+            <!-- /ko -->
+        </ul>
+    </div>
     <div class="mdfiles-index" data-bind="visible: MDFiles().length > 0">
         <h3>Markdown Files</h3>
         <ul>

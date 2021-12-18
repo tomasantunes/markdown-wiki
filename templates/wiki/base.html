@@ -141,6 +141,7 @@
             var self = this;
             self.tree = ko.observableArray();
             self.MDFiles = ko.observableArray();
+            self.PDFFiles = ko.observableArray();
             self.imageFiles = ko.observableArray();
             self.feed = ko.observableArray();
             self.currentCategory = ko.observable();
@@ -166,6 +167,16 @@
                             var filename = val.replace(/\\/g,"/");
                             filename = filename.substring(filename.indexOf('/') + 1);
                             self.imageFiles.push(new self.ImageModel({"path": Flask.url_for("getImageFile", {"filename": filename})}));
+                        });
+                    });
+
+                    self.PDFFiles.removeAll();
+                    $.get("{{wiki_route}}/get-pdf-files", {"root": fm.root()})
+                    .done(function(data) {
+                        $.each(data, function(i, val) {
+                            var filename = val.replace(/\\/g,"/");
+                            filename = filename.substring(filename.indexOf('/') + 1);
+                            self.PDFFiles.push(new self.PDFFileModel({"path": Flask.url_for("getPDFFile", {"filename": filename})}));
                         });
                     });
 
@@ -204,6 +215,16 @@
                     });
                 });
 
+                self.PDFFiles.removeAll();
+                $.get("{{wiki_route}}/get-pdf-files", {"root": root})
+                .done(function(data) {
+                    $.each(data, function(i, val) {
+                        var filename = val.replace(/\\/g,"/");
+                        filename = filename.substring(filename.indexOf('/') + 1);
+                        self.PDFFiles.push(new self.PDFFileModel({"path": Flask.url_for("getPDFFile", {"filename": filename})}));
+                    });
+                });
+
                 self.MDFiles.removeAll();
                 $.get("{{wiki_route}}/get-md-files", {"root": root})
                 .done(function(data) {
@@ -229,6 +250,15 @@
                 im.filename = ko.observable(fn);
                 im.link = ko.observable("#" + fn);
                 im.linkID = ko.observable(fn + "-link");
+            }
+
+            self.PDFFileModel = function(p) {
+                var pfm = this;
+                pfm.path = ko.observable(p.path);
+                var fn = p.path.substring(p.path.lastIndexOf('/')+1, p.path.lastIndexOf('.'));
+                pfm.filename = ko.observable(fn);
+                pfm.link = ko.observable("#" + fn);
+                pfm.linkID = ko.observable(fn + "-link");
             }
 
             self.MDFileModel = function(m) {

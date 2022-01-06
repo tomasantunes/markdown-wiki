@@ -5,6 +5,8 @@ import datetime
 
 print("Updating repo.")
 
+os.system("git pull")
+
 wiki_route = "/wiki"
 wiki_folder = "wiki"
 excluded_files = [wiki_folder + '/logs/feed.md']
